@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const config = require("config");
+const dotenv = require("dotenv");
+// Load env variables
+dotenv.config({ path: "./config/config.env" });
 const Joi = require("joi");
 const PasswordComplexity = require("joi-password-complexity");
 
@@ -34,7 +36,7 @@ schema.methods.genJwt = function() {
       username: this.username,
       role: this.role
     },
-    config.get("jwtSecret")
+    process.env.JWTSECRET
   );
 };
 const User = mongoose.model("User", schema);
