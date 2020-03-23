@@ -1,12 +1,11 @@
-const Bootcamp = require("../models/Bootcamp");
+const Product = require("../models/Product");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
-const geocoder = require("../utils/geocoder");
 
-//@Desc Get All Bootcamps
-//@route  GET /api/v1/bootcamps
+//@Desc Get All Products
+//@route  GET /api/v1/products
 //@access Public
-exports.getBootcamps = asyncHandler(async (req, res, next) => {
+exports.getProducts = asyncHandler(async (req, res, next) => {
   let query;
 
   const reqQuery = { ...req.query };
@@ -24,7 +23,7 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
   //Finding resourse
-  query = Bootcamp.find(JSON.parse(queryStr)).populate("courses");
+  query = Product.find(JSON.parse(queryStr));
 
   //SELECT Fields
   if (req.query.select) {
@@ -45,12 +44,12 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   const limit = parseInt(req.query.limit, 10) || 20;
   const startIndex = (page - 1) * limit;
   const endEndex = page * limit;
-  const total = await Bootcamp.countDocuments();
+  const total = await Product.countDocuments();
 
   query = query.skip(startIndex).limit(limit);
 
   //Excuting resourse
-  const bootcamps = await query;
+  const products = await query;
 
   //Pagination result
   const pagination = {};
@@ -70,101 +69,65 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    count: bootcamps.length,
+    count: products.length,
     pagination,
-    data: bootcamps
+    data: products
   });
 });
 
 // GET GET GET GET GET GET GET GET GET GET GET GET GET GET GET GET GET GET
 
-//@Desc Get Single Bootcamp
-//@route  GET /api/v1/bootcamps/:id
+//@Desc Get Single Product
+//@route  GET /api/v1/products/:id
 //@access Public
-exports.getBootcamp = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findById(req.params.id);
-  if (!bootcamp) {
+exports.getProduct = asyncHandler(async (req, res, next) => {
+  const product = await Product.findById(req.params.id);
+  if (!product) {
     return next(
-      new ErrorResponse(
-        `Bootcamp not found with an id of ${res.params.id}`,
-        404
-      )
+      new ErrorResponse(`Product not found with an id of ${res.params.id}`, 404)
     );
   }
-  res.status(200).json({ success: true, data: bootcamp });
-});
-
-// @desc      Get bootcamps within a radius
-// @route     GET /api/v1/bootcamps/radius/:zipcode/:distance
-// @access    Private
-exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
-  const { zipcode, distance } = req.params;
-
-  // Get lat/lng from geocoder
-  const loc = await geocoder.geocode(zipcode);
-  const lat = loc[0].latitude;
-  const lng = loc[0].longitude;
-
-  // Calc radius using radians
-  // Divide dist by radius of Earth
-  // Earth Radius = 3,963 mi / 6,378 km
-  const radius = distance / 3963;
-
-  const bootcamps = await Bootcamp.find({
-    location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } }
-  });
-
-  res.status(200).json({
-    success: true,
-    count: bootcamps.length,
-    data: bootcamps
-  });
+  res.status(200).json({ success: true, data: product });
 });
 
 // POST POST POST POST POST POST POST POST POST POST POST POST POST POST POST POST POST POST
 
-//@Desc Create new Bootcamp
-//@route  POST /api/v1/bootcamps
+//@Desc Create new Product
+//@route  POST /api/v1/products
 //@access Private
-exports.createBootcamp = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.create(req.body);
-  res.status(201).json({ success: true, data: bootcamp });
+exports.createProduct = asyncHandler(async (req, res, next) => {
+  const product = await Product.create(req.body);
+  res.status(201).json({ success: true, data: product });
 });
 
-//@Desc Update new Bootcamp
-//@route  PUT /api/v1/bootcamps/:id
+//@Desc Update new Product
+//@route  PUT /api/v1/products/:id
 //@access Private
-exports.updateBootcamp = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+exports.updateProduct = asyncHandler(async (req, res, next) => {
+  const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
     //To get the new data in the response
     new: true,
     runValidator: true
   });
-  if (!bootcamp) {
+  if (!product) {
     return next(
-      new ErrorResponse(
-        `Bootcamp not found with an id of ${res.params.id}`,
-        404
-      )
+      new ErrorResponse(`Product not found with an id of ${res.params.id}`, 404)
     );
   }
-  res.status(200).json({ success: true, data: bootcamp });
+  res.status(200).json({ success: true, data: product });
 });
 
-//@Desc Delete Bootcamp
-//@route  DELETE /api/v1/bootcamps/:id
+//@Desc Delete Product
+//@route  DELETE /api/v1/products/:id
 //@access Private
-exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findById(req.params.id);
-  if (!bootcamp) {
+exports.deleteProduct = asyncHandler(async (req, res, next) => {
+  const product = await Product.findById(req.params.id);
+  if (!product) {
     return next(
-      new ErrorResponse(
-        `Bootcamp not found with an id of ${res.params.id}`,
-        404
-      )
+      new ErrorResponse(`Product not found with an id of ${res.params.id}`, 404)
     );
   }
 
-  bootcamp.remove();
+  product.remove();
   res.status(200).json({ success: true, data: {} });
 });
