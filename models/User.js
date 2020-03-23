@@ -32,7 +32,18 @@ const schema = new mongoose.Schema({
       product: {
         type: Schema.Types.ObjectId,
         ref: "Product"
-      }
+      },
+      
+    }
+  ],
+  cart: [
+    {
+      product: {
+        type: Schema.Types.ObjectId,
+        ref: "Product"
+      }, 
+      totalPrice: Number,
+      numberOfItems: Number
     }
   ],
   createdAt: {

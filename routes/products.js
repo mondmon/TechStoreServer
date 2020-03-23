@@ -4,7 +4,12 @@ const {
   getProduct,
   createProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  getFavouriteProducts,
+  addFavouriteProduct,
+  removeFromFavourites,
+  addToCart,
+  getCartItems,
 } = require("../controllers/products");
 const router = express.Router({ mergeParams: true });
 
@@ -16,7 +21,14 @@ router
 router
   .route("/favourites/:userId/productId")
   .get(getFavouriteProducts)
-  .post(addFavouriteProduct);
+  .post(addFavouriteProduct)
+  .delete(removeFromFavourites);
+
+  router
+  .route("/cart/:userId/productId")
+  .get(getCartItems)
+  .post(addToCart)
+  .delete(removeFromCart);
 
 router
   .route("/:id")
