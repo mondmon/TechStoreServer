@@ -25,9 +25,9 @@ const ProductSchema = new mongoose.Schema({
   },
   price: { type: Number, required: true, min: 0 },
   discount: { type: Number, required: true },
-  photo: {
+  image: {
     type: String,
-    default: "no-photo.jpg"
+    default: "no-image.jpg"
   },
   featured: {
     type: Boolean,

@@ -10,7 +10,7 @@ const auth = require("./middleware/auth");
 
 //Import Route Files
 const users = require("./routes/users");
-//const products = require("./routes/products");
+const products = require("./routes/products");
 
 // Load env variables
 dotenv.config({ path: "./config/config.env" });
@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === "development") {
 
 //Mount routers
 app.use("/api/v1/users", users);
-//app.use("/api/v1/products", products);
+app.use("/api/v1/products", products);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;

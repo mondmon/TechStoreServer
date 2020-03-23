@@ -21,8 +21,8 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 console.log(`DB CONNECTED`.blue.bold.inverse);
-//Read JSON files
 
+//Read JSON files
 const products = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/products.json`, "utf-8")
 );
