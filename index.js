@@ -7,6 +7,7 @@ const connectDB = require("./config/db");
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 const auth = require("./middleware/auth");
+var cors = require("cors");
 
 //Import Route Files
 const users = require("./routes/users");
@@ -22,7 +23,7 @@ const app = express();
 
 //Body parser
 app.use(express.json());
-
+app.use(cors());
 // Dev loggin middleware
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
