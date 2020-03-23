@@ -81,7 +81,7 @@ exports.getProducts = asyncHandler(async (req, res, next) => {
 });
 
 //@Desc Get All Products
-//@route  GET /api/v1/products
+//@route  GET /api/v1/products/favourties
 //@access Public
 exports.getFavouriteProducts = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.params.userId);
@@ -95,6 +95,24 @@ exports.getFavouriteProducts = asyncHandler(async (req, res, next) => {
     );
   } else {
     res.status(200).json({ success: true, data: user.favourites });
+  }
+});
+
+//@Desc Get All Products
+//@route  GET /api/v1/products/cart/:userId/:productId
+//@access Public
+exports.getCartItems = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.userId);
+  if (!user) {
+    return next(
+      new ErrorResponse(`User not found with an id of ${res.params.id}`, 404)
+    );
+  } else if (user.cart.length == 0 || user.cart == undefined) {
+    return next(
+      new ErrorResponse(`This user doesn't have favourite products`, 404)
+    );
+  } else {
+    res.status(200).json({ success: true, data: user.cart });
   }
 });
 
@@ -138,8 +156,8 @@ exports.updateProduct = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: product });
 });
 
-//@Desc Create new Product
-//@route  POST /api/v1/products
+//@Desc add new Product to faourites
+//@route  POST /api/v1/products/favourites/:userId/productId:
 //@access Private
 exports.addFavouriteProduct = asyncHandler(auth, async (req, res, next) => {
   const product = await Product.findById(req.params.productId);
@@ -159,6 +177,95 @@ exports.addFavouriteProduct = asyncHandler(auth, async (req, res, next) => {
 
     res.status(201).json({ success: true, data: user.favourites });
   }
+});
+
+//@Desc Add product to cart
+//@route  POST /api/v1/products/cart/:userId/:productId
+//@access Private
+exports.addToCart = asyncHandler(auth, async (req, res, next) => {
+  const product = await Product.findById(req.params.productId);
+  if (!product) {
+    return next(
+      new ErrorResponse(`Product not found with an id of ${res.params.id}`, 404)
+    );
+  } else {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return next(
+        new ErrorResponse(`User not found with an id of ${res.params.id}`, 404)
+      );
+    }
+    user.cart = [...req.body.cart];
+    user.save();
+
+    res.status(201).json({ success: true, data: user.favourites });
+  }
+});
+
+// DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE
+
+//@Desc Remove Product from favourites
+//@route  DELETE /api/v1/products/favourites/:userId/:productId
+//@access Private
+exports.removeFromFavourites = asyncHandler(auth, async (req, res, next) => {
+  const product = await Product.findById(req.params.productId);
+  if (!product) {
+    return next(
+      new ErrorResponse(`Product not found with an id of ${res.params.id}`, 404)
+    );
+  }
+
+  const user = await User.findById(req.params.userId);
+  if (!user) {
+    return next(
+      new ErrorResponse(`User not found with an id of ${res.params.id}`, 404)
+    );
+  } else {
+    // get remove index
+    const removeIndex = user.favourites
+      .map(item => item.user.toString())
+      .indexOf(req.params.productId);
+
+    // Splice out of array
+    user.favourites.splice(removeIndex, 1);
+
+    // Save
+    user.save();
+  }
+
+  res.status(200).json({ success: true, data: user.favourites });
+});
+
+//@Desc Remove Product from cart
+//@route  DELETE /api/v1/products/favourites/:userId/:productId
+//@access Private
+exports.removeFromCart = asyncHandler(auth, async (req, res, next) => {
+  const product = await Product.findById(req.params.productId);
+  if (!product) {
+    return next(
+      new ErrorResponse(`Product not found with an id of ${res.params.id}`, 404)
+    );
+  }
+
+  const user = await User.findById(req.params.userId);
+  if (!user) {
+    return next(
+      new ErrorResponse(`User not found with an id of ${res.params.id}`, 404)
+    );
+  } else {
+    // get remove index
+    const removeIndex = user.cart
+      .map(item => item.user.toString())
+      .indexOf(req.params.productId);
+
+    // Splice out of array
+    user.cart.splice(removeIndex, 1);
+
+    // Save
+    user.save();
+  }
+
+  res.status(200).json({ success: true, data: user.cart });
 });
 
 //@Desc Delete Product
