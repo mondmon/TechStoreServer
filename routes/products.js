@@ -14,6 +14,11 @@ router
   .post(createProduct);
 
 router
+  .route("/favourites/:userId/productId")
+  .get(getFavouriteProducts)
+  .post(addFavouriteProduct);
+
+router
   .route("/:id")
   .get(getProduct)
   .put(updateProduct)

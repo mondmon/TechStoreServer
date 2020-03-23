@@ -1,6 +1,11 @@
 const Product = require("../models/Product");
+const User = require("../models/User");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
+const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
+
+// GET GET GET GET GET GET GET GET GET GET GET GET GET GET GET GET GET GET
 
 //@Desc Get All Products
 //@route  GET /api/v1/products
@@ -75,7 +80,23 @@ exports.getProducts = asyncHandler(async (req, res, next) => {
   });
 });
 
-// GET GET GET GET GET GET GET GET GET GET GET GET GET GET GET GET GET GET
+//@Desc Get All Products
+//@route  GET /api/v1/products
+//@access Public
+exports.getFavouriteProducts = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.userId);
+  if (!user) {
+    return next(
+      new ErrorResponse(`User not found with an id of ${res.params.id}`, 404)
+    );
+  } else if (user.favourites.length == 0 || user.favourites == undefined) {
+    return next(
+      new ErrorResponse(`This user doesn't have favourite products`, 404)
+    );
+  } else {
+    res.status(200).json({ success: true, data: user.favourites });
+  }
+});
 
 //@Desc Get Single Product
 //@route  GET /api/v1/products/:id
@@ -117,10 +138,33 @@ exports.updateProduct = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: product });
 });
 
+//@Desc Create new Product
+//@route  POST /api/v1/products
+//@access Private
+exports.addFavouriteProduct = asyncHandler(auth, async (req, res, next) => {
+  const product = await Product.findById(req.params.productId);
+  if (!product) {
+    return next(
+      new ErrorResponse(`Product not found with an id of ${res.params.id}`, 404)
+    );
+  } else {
+  const user = await User.findById(req.params.userId);
+  if (!user) {
+    return next(
+      new ErrorResponse(`User not found with an id of ${res.params.id}`, 404)
+    );
+  }
+  user.favourites.unshift(product);
+  user.save();
+  
+  res.status(201).json({ success: true, data: user.favourites });
+});
+
+
 //@Desc Delete Product
 //@route  DELETE /api/v1/products/:id
 //@access Private
-exports.deleteProduct = asyncHandler(async (req, res, next) => {
+exports.deleteProduct = asyncHandler( [auth, admin], async (req, res, next) => {
   const product = await Product.findById(req.params.id);
   if (!product) {
     return next(

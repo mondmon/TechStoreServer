@@ -26,6 +26,18 @@ const schema = new mongoose.Schema({
   role: {
     type: String,
     enum: ["user", "admin"]
+  },
+  favourites: [
+    {
+      product: {
+        type: Schema.Types.ObjectId,
+        ref: "Product"
+      }
+    }
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 });
 
