@@ -7,18 +7,13 @@ const colors = require("colors");
 const dotenv = require("dotenv");
 
 //Load env vars
-dotenv.config({ path: "./config/config" });
+dotenv.config({ path: "./config/config.env" });
 
 //Load Models
-const Bootcamp = require("./models/Bootcamp");
-const Course = require("./models/Course");
-
-const MONGURI =
-  "mongodb://umkemcnmixvfnwuwyalq:vIHhTtYdVGhDIqN3lEys@bkfxjex1lhxu5w7-mongodb.services.clever-cloud.com:27017/bkfxjex1lhxu5w7";
-
+const Product = require("./models/Product");
 //Connect to DB
 
-mongoose.connect(MONGURI, {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
@@ -27,20 +22,14 @@ mongoose.connect(MONGURI, {
 
 console.log(`DB CONNECTED`.blue.bold.inverse);
 //Read JSON files
-const bootcamps = JSON.parse(
-  fs.readFileSync(`${__dirname}/_data/bootcamps.json`, "utf-8")
-);
-
-//Read JSON files
-const courses = JSON.parse(
-  fs.readFileSync(`${__dirname}/_data/courses.json`, "utf-8")
+const products = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/products.json`, "utf-8")
 );
 
 //Import into DB
 const importData = async () => {
   try {
-    await Bootcamp.create(bootcamps);
-    await Course.create(courses);
+    await Product.create(products);
 
     console.log(`Data Imported...`.green.inverse.bold);
     process.exit();
@@ -52,8 +41,7 @@ const importData = async () => {
 //Destroy Data
 const deleteData = async () => {
   try {
-    await Bootcamp.deleteMany();
-    await Course.deleteMany();
+    await Product.deleteMany();
 
     console.log(`Data Destroyed...`.red.inverse.bold);
     process.exit();
