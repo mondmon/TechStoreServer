@@ -11,20 +11,20 @@ const ProductSchema = new mongoose.Schema({
     type: [String],
     required: true,
     enum: [
-      "google",
-      "samsung",
-      "htc",
-      "samsung",
-      "fuji",
-      "canon",
-      "nikon",
-      "acer",
-      "hp",
-      "lenovo",
-      "dell"
+      "Google",
+      "Samsung",
+      "Htc",
+      "Samsung",
+      "Fuji",
+      "Canon",
+      "Nikon",
+      "Acer",
+      "Hp",
+      "Lenovo",
+      "Dell"
     ]
   },
-  price: { type: Number, required: true },
+  price: { type: Number, required: true, min: 0 },
   discount: { type: Number, required: true },
   photo: {
     type: String,

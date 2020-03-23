@@ -4,12 +4,8 @@ const {
   getUser,
   createUser,
   updateUser,
-  deleteUser,
-  getUsersInRadius
+  deleteUser
 } = require("../controllers/users");
-
-//Include other resourse router
-const courseRouter = require("./products");
 
 const router = express.Router();
 
