@@ -36,9 +36,13 @@ exports.getUser = asyncHandler(validateObjectId, async (req, res, next) => {
 //@Desc   Add User
 //@route  POST /api/v1/users
 //@access Private
-exports.createUser = asyncHandler(admin, async (req, res, next) => {
+exports.createUser = asyncHandler(async (req, res, next) => {
   const { error } = validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) {
+    return next(
+      new ErrorResponse(`the following error occurred:  ${error}`, 400)
+    );
+  }
 
   if (await User.findOne({ username: req.body.username })) {
     return next(new ErrorResponse(`User name already existed`, 400));

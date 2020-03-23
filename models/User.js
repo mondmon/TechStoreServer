@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 // Load env variables
@@ -32,8 +33,7 @@ const schema = new mongoose.Schema({
       product: {
         type: Schema.Types.ObjectId,
         ref: "Product"
-      },
-      
+      }
     }
   ],
   cart: [
@@ -41,7 +41,7 @@ const schema = new mongoose.Schema({
       product: {
         type: Schema.Types.ObjectId,
         ref: "Product"
-      }, 
+      },
       totalPrice: Number,
       numberOfItems: Number
     }
@@ -62,7 +62,8 @@ schema.methods.genJwt = function() {
     process.env.JWTSECRET
   );
 };
-const User = mongoose.model("User", schema);
+
+module.exports = User = mongoose.model("User", schema);
 
 const validate = function(user) {
   const schema = {

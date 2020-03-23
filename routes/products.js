@@ -10,6 +10,7 @@ const {
   removeFromFavourites,
   addToCart,
   getCartItems,
+  removeFromCart
 } = require("../controllers/products");
 const router = express.Router({ mergeParams: true });
 
@@ -24,7 +25,7 @@ router
   .post(addFavouriteProduct)
   .delete(removeFromFavourites);
 
-  router
+router
   .route("/cart/:userId/productId")
   .get(getCartItems)
   .post(addToCart)
