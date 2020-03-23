@@ -148,23 +148,23 @@ exports.addFavouriteProduct = asyncHandler(auth, async (req, res, next) => {
       new ErrorResponse(`Product not found with an id of ${res.params.id}`, 404)
     );
   } else {
-  const user = await User.findById(req.params.userId);
-  if (!user) {
-    return next(
-      new ErrorResponse(`User not found with an id of ${res.params.id}`, 404)
-    );
-  }
-  user.favourites.unshift(product);
-  user.save();
-  
-  res.status(201).json({ success: true, data: user.favourites });
-});
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return next(
+        new ErrorResponse(`User not found with an id of ${res.params.id}`, 404)
+      );
+    }
+    user.favourites.unshift(product);
+    user.save();
 
+    res.status(201).json({ success: true, data: user.favourites });
+  }
+});
 
 //@Desc Delete Product
 //@route  DELETE /api/v1/products/:id
 //@access Private
-exports.deleteProduct = asyncHandler( [auth, admin], async (req, res, next) => {
+exports.deleteProduct = asyncHandler([auth, admin], async (req, res, next) => {
   const product = await Product.findById(req.params.id);
   if (!product) {
     return next(
