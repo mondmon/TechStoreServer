@@ -63,7 +63,7 @@ schema.methods.genJwt = function() {
   );
 };
 
-module.exports = User = mongoose.model("User", schema);
+const User = mongoose.model("User", schema);
 
 const validate = function(user) {
   const schema = {
